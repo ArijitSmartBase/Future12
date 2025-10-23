@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJFI LoveMate - Interactive Voice Dating Coach</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #ff1744;
+            --secondary: #f50057;
+            --accent: #ff4081;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f857a6 0%, #ff5858 100%);
+            --gradient-3: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --text-dark: #2d3436;
+            --text-light: #636e72;
+            --bg-light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 25%, #fab1a0 50%, #ff7675 75%, #fd79a8 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .floating-heart {
+            position: absolute;
+            font-size: 24px;
+            opacity: 0;
+            animation: floatUp 12s infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-150px) rotate(360deg) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            animation: fadeOutSplash 1s ease-out 2.5s forwards;
+        }
+
+        @keyframes fadeOutSplash {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        .splash-heart {
+            font-size: 8em;
+            animation: heartBeat 1.2s ease-in-out infinite;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.2); }
+            50% { transform: scale(1); }
+        }
+
+        .splash-title {
+            font-size: 3em;
+            color: white;
+            font-weight: 800;
+            margin: 25px 0 15px;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+            animation: slideUpFade 0.8s ease-out;
+        }
+
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .splash-subtitle {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.3em;
+            animation: slideUpFade 1s ease-out;
+            text-align: center;
+            padding: 0 30px;
+        }
+
+        .splash-footer {
+            position: absolute;
+            bottom: 50px;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            animation: fadeInSlow 2s ease-out;
+        }
+
+        @keyframes fadeInSlow {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .header {
+            text-align: center;
+            padding: 35px 20px;
+            background: white;
+            border-radius: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: slideDown 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .logo {
+            font-size: 4.5em;
+            margin-bottom: 15px;
+            animation: bounce 2.5s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .title {
+            font-size: 2.8em;
+            font-weight: 800;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tagline {
+            color: var(--text-light);
+            font-size: 1.3em;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            background: white;
+            border-radius: 30px;
+            padding: 35px;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+            animation: scaleInCard 0.6s ease-out;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        @keyframes scaleInCard {
+            from {
+                opacity: 0;
+                transform: scale(0.9) rotate(-2deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: var(--text-dark);
+            margin-bottom: 28px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-icon {
+            font-size: 1.5em;
+        }
+
+        .lang-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .lang-card {
+            padding: 30px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 4px solid transparent;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lang-card::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: var(--gradient-2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+            z-index: 0;
+        }
+
+        .lang-card:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .lang-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .lang-card.active {
+            background: var(--gradient-2);
+            border-color: var(--primary);
+            box-shadow: 0 15px 40px rgba(255, 23, 68, 0.5);
+            transform: scale(1.08);
+        }
+
+        .lang-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .lang-flag {
+            font-size: 3.5em;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .lang-name {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: var(--text-dark);
+            transition: color 0.3s;
+        }
+
+        .lang-card.active .lang-name,
+        .lang-card:hover .lang-name {
+            color: white;
+        }
+
+        .voice-assistant {
+            background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            border: 4px dashed #7e57c2;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .voice-assistant::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2), transparent);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 25px;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7em;
+            box-shadow: 0 15px 40px rgba(248, 87, 166, 0.4);
+            animation: float 3s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+            border: 8px solid white;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-15px) scale(1.05);
+            }
+        }
+
+        .avatar.speaking {
+            animation: speaking 0.5s ease-in-out infinite;
+            box-shadow: 0 15px 60px rgba(248, 87, 166, 0.8), 0 0 40px rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes speaking {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 15px 60px rgba(248, 87, 166, 0.8), 0 0 40px rgba(255, 255, 255, 0.5);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 20px 80px rgba(248, 87, 166, 1), 0 0 60px rgba(255, 255, 255, 0.8);
+            }
+        }
+
+        .sound-wave-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(248, 87, 166, 0.5);
+            opacity: 0;
+        }
+
+        .avatar.speaking .sound-wave-ring:nth-child(1) {
+            animation: soundWave 2s ease-out infinite;
+        }
+
+        .avatar.speaking .sound-wave-ring:nth-child(2) {
+            animation: soundWave 2s ease-out 0.5s infinite;
+        }
+
+        .avatar.speaking .sound-wave-ring:nth-child(3) {
+            animation: soundWave 2s ease-out 1s infinite;
+        }
+
+        @keyframes soundWave {
+            0% {
+                width: 100%;
+                height: 100%;
+                opacity: 1;
+            }
+            100% {
+                width: 150%;
+                height: 150%;
+                opacity: 0;
+            }
+        }
+
+        .voice-name {
+            font-size: 2.2em;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .voice-role {
+            font-size: 1.3em;
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .topic-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+            margin: 30px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .topic-btn {
+            padding: 25px 20px;
+            background: white;
+            border: 4px solid transparent;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .topic-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: var(--gradient-2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+            z-index: 0;
+        }
+
+        .topic-btn:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .topic-btn:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            border-color: var(--accent);
+        }
+
+        .topic-btn > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .topic-icon {
+            font-size: 3em;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .topic-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: var(--text-dark);
+            transition: color 0.3s;
+        }
+
+        .topic-btn:hover .topic-title {
+            color: white;
+        }
+
+        .speech-bubble {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            margin-top: 30px;
+            border-left: 6px solid #7e57c2;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: none;
+            animation: slideInBubble 0.5s ease-out;
+            position: relative;
+            z-index: 1;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        @keyframes slideInBubble {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .speech-bubble.visible {
+            display: block;
+        }
+
+        .bubble-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .bubble-title-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bubble-avatar {
+            font-size: 2em;
+        }
+
+        .bubble-title {
+            font-weight: 700;
+            color: #7e57c2;
+            font-size: 1.2em;
+        }
+
+        .audio-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background: var(--gradient-2);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(248, 87, 166, 0.3);
+        }
+
+        .control-btn:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 18px rgba(248, 87, 166, 0.5);
+        }
+
+        .bubble-text {
+            color: var(--text-dark);
+            line-height: 1.9;
+            font-size: 1.25em;
+            font-weight: 500;
+        }
+
+        .typing {
+            display: inline-block;
+        }
+
+        .typing span {
+            animation: blink 1.4s infinite;
+            font-size: 1.8em;
+        }
+
+        .typing span:nth-child(2) { animation-delay: 0.2s; }
+        .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes blink {
+            0%, 60%, 100% { opacity: 0; }
+            30% { opacity: 1; }
+        }
+
+        .wave-visualizer {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 25px 0;
+            height: 70px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .wave-visualizer.active {
+            display: flex;
+        }
+
+        .wave-bar {
+            width: 8px;
+            background: var(--gradient-2);
+            border-radius: 4px;
+            animation: waveMotion 1s ease-in-out infinite;
+            box-shadow: 0 2px 8px rgba(248, 87, 166, 0.3);
+        }
+
+        .wave-bar:nth-child(1) { height: 35px; animation-delay: 0s; }
+        .wave-bar:nth-child(2) { height: 25px; animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { height: 45px; animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { height: 30px; animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { height: 40px; animation-delay: 0.4s; }
+        .wave-bar:nth-child(6) { height: 32px; animation-delay: 0.5s; }
+        .wave-bar:nth-child(7) { height: 38px; animation-delay: 0.6s; }
+
+        @keyframes waveMotion {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(2.2); }
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .tip-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.1);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid transparent;
+        }
+
+        .tip-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(248, 87, 166, 0.1), transparent);
+            transform: scale(0);
+            transition: transform 0.6s ease;
+        }
+
+        .tip-card:hover::before {
+            transform: scale(1);
+        }
+
+        .tip-card:hover {
+            transform: translateY(-15px) rotate(2deg);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            border-color: var(--accent);
+        }
+
+        .tip-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .tip-title {
+            font-size: 1.5em;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .tip-desc {
+            color: var(--text-light);
+            line-height: 1.7;
+            font-size: 1.05em;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 50px 20px;
+            color: white;
+            margin-top: 60px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .footer-logo {
+            font-size: 2.5em;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .footer-text {
+            font-size: 1.2em;
+            margin-bottom: 12px;
+        }
+
+        .footer-company {
+            font-size: 1em;
+            opacity: 0.95;
+            margin-top: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .splash-title {
+                font-size: 2.2em;
+            }
+
+            .title {
+                font-size: 2em;
+            }
+
+            .logo {
+                font-size: 3.5em;
+            }
+
+            .section-title {
+                font-size: 1.6em;
+            }
+
+            .lang-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .avatar-container {
+                width: 160px;
+                height: 160px;
+            }
+
+            .avatar {
+                font-size: 5.5em;
+            }
+
+            .voice-name {
+                font-size: 1.8em;
+            }
+
+            .topic-selector {
+                grid-template-columns: 1fr;
+            }
+
+            .tips-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .bubble-text {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg" id="animatedBg"></div>
+
+    <div class="splash" id="splash">
+        <div class="splash-heart">💖</div>
+        <div class="splash-title">AJFI LoveMate</div>
+        <div class="splash-subtitle">AI Voice-Powered Dating Assistant</div>
+        <div class="splash-footer">
+            <strong>Developed by AJ Future Industries</strong><br>
+            CEO: Arijit Mahata
+        </div>
+    </div>
+
+    <div class="container" id="mainApp" style="display: none;">
+        <div class="header">
+            <div class="logo">💝</div>
+            <div class="title">AJFI LoveMate</div>
+            <div class="tagline">Your Personal Voice Dating Coach</div>
+        </div>
+
+        <div id="languageScreen" class="card">
+            <div class="section-title">
+                <span class="section-icon">🌍</span>
+                Choose Your Language
+            </div>
+            <div class="lang-grid">
+                <div class="lang-card" onclick="selectLanguage('en')">
+                    <div class="lang-flag">🇬🇧</div>
+                    <div class="lang-name">English</div>
+                </div>
+                <div class="lang-card" onclick="selectLanguage('hi')">
+                    <div class="lang-flag">🇮🇳</div>
+                    <div class="lang-name">हिन्दी</div>
+                </div>
+                <div class="lang-card" onclick="selectLanguage('bn')">
+                    <div class="lang-flag">🇧🇩</div>
+                    <div class="lang-name">বাংলা</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="assistantScreen" class="hidden">
+            <div class="card">
+                <div class="voice-assistant">
+                    <div class="avatar-container">
+                        <div class="avatar" id="avatar">
+                            <div class="sound-wave-ring"></div>
+                            <div class="sound-wave-ring"></div>
+                            <div class="sound-wave-ring"></div>
+                            👩
+                        </div>
+                    </div>
+                    <div class="voice-name" id="assistantName">Maya</div>
+                    <div class="voice-role">Your Personal Dating Coach</div>
+                    
+                    <div class="wave-visualizer" id="waveVisualizer">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+
+                    <div class="topic-selector" id="topicSelector"></div>
+
+                    <div class="speech-bubble" id="speechBubble">
+                        <div class="bubble-header">
+                            <div class="bubble-title-section">
+                                <span class="bubble-avatar">👩</span>
+                                <span class="bubble-title" id="bubbleTitle">Maya says:</span>
+                            </div>
+                            <div class="audio-controls">
+                                <button class="control-btn" onclick="pauseSpeech()" title="Pause">⏸️</button>
+                                <button class="control-btn" onclick="resumeSpeech()" title="Resume">▶️</button>
+                                <button class="control-btn" onclick="stopSpeech()" title="Stop">⏹️</button>
+                            </div>
+                        </div>
+                        <div class="bubble-text" id="bubbleText"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="section-title">
+                    <span class="section-icon">✨</span>
+                    <span id="tipsTitle">Dating Tips & Advice</span>
+                </div>
+                <div class="tips-grid" id="tipsGrid"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-logo">💕 AJ Future Industries</div>
+            <div class="footer-text">Empowering Love Through AI Technology</div>
+            <div class="footer-company">
+                © 2025 All Rights Reserved | CEO: Arijit Mahata<br>
+                Building Meaningful Connections
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLanguage = '';
+        let isSpeaking = false;
+        let synthesis = window.speechSynthesis;
+        let currentUtterance = null;
+
+        const content = {
+            en: {
+                name: 'Maya',
+                role: 'Your Personal Dating Coach',
+                tipsTitle: 'Dating Tips & Advice',
+                topics: [
+                    { icon: '💝', title: 'Introduction', key: 'intro' },
+                    { icon: '💑', title: 'First Date Tips', key: 'firstdate' },
+                    { icon: '💬', title: 'Conversation Skills', key: 'conversation' },
+                    { icon: '❤️', title: 'Building Connection', key: 'connection' },
+                    { icon: '🌹', title: 'Romance Tips', key: 'romance' },
+                    { icon: '💪', title: 'Confidence Boost', key: 'confidence' }
+                ],
+                speeches: {
+                    intro: "Hello! I'm Maya, your personal dating coach. I'm so excited to help you navigate the beautiful world of love and relationships. Whether you're preparing for your first date, or looking to deepen an existing connection, I'm here to guide you with warmth and wisdom. Click on any topic below to hear my advice, and don't forget to check out the tips section for more insights!",
+                    firstdate: "First dates can feel nerve-wracking, but they're also incredibly exciting! Here's my best advice: First, be authentically yourself. The right person will fall in love with the real you, not a character you're playing. Dress in something that makes you feel confident and comfortable. Arrive on time - it shows respect and enthusiasm. Choose a venue where you can actually talk and connect, like a cozy café or a scenic walk in the park. Put your phone away completely - give them your undivided attention. Ask open-ended questions and really listen to their answers. Show genuine interest in their passions and stories. And remember, it's okay to be nervous! A little nervousness shows you care. Smile naturally, make eye contact, and most importantly, have fun! This is an opportunity to meet someone new and create a beautiful memory.",
+                    conversation: "Great conversation is the foundation of any meaningful connection! Let me share some powerful tips: Start with open-ended questions that invite storytelling. Instead of asking 'Do you like traveling?' ask 'What's the most amazing place you've ever visited and why?' This opens up deeper conversations. Practice active listening - don't just wait for your turn to speak. Show you're engaged by nodding, maintaining eye contact, and asking thoughtful follow-up questions. Share your own stories too! Vulnerability creates connection. Talk about your passions, dreams, and even your quirky interests. Use humor naturally - laughter is one of the best ways to bond. But avoid controversial topics on early dates like politics or religion. Keep the energy positive and curious. Remember, good conversation is like a dance - it flows back and forth naturally. And here's a secret: people love talking about themselves, so be genuinely curious about them!",
+                    connection: "Building a deep emotional connection is what transforms dating into something truly special. Here's how to create that magic: First, be present. Put away distractions and truly focus on the moment you're sharing. Share your authentic thoughts and feelings - vulnerability is incredibly attractive and creates intimacy. Find common ground by discovering shared values, interests, or experiences. These become the foundation of your bond. Show appreciation through small gestures - a genuine compliment, remembering details they mentioned, or a thoughtful text message. Physical touch also builds connection when appropriate - a light touch on the arm, holding hands, or a warm hug. Create shared experiences and memories together. Try new activities, explore new places, and laugh together. Be supportive of their dreams and challenges. Show that you're someone they can count on. Trust is built through consistency and reliability. And remember, true connection takes time. Don't rush it - let it develop naturally and beautifully.",
+                    romance: "Romance is the beautiful art of making someone feel special and cherished! Let me share some romantic secrets: Small gestures matter more than grand displays. A handwritten note, their favorite coffee surprise, or remembering something important to them speaks volumes. Create romantic moments through thoughtful planning - a sunset picnic, stargazing, or cooking dinner together. Use your words to express appreciation and affection. Tell them specifically what you admire about them. Compliments about character mean more than appearance alone. Surprise them occasionally - but make it personal to their interests and preferences. Physical affection like holding hands, gentle touches, and warm hugs releases bonding hormones. Make eye contact and smile - these simple acts are incredibly romantic. Put effort into date nights even in long-term relationships. Keep the spark alive through novelty and adventure. Share music, dance together, and create rituals that are unique to your relationship. Remember, romance isn't about expensive gifts - it's about making them feel valued, understood, and loved through consistent, thoughtful actions.",
+                    confidence: "Confidence is the most attractive quality you can cultivate! Here's how to boost yours: First, remember that confidence comes from self-acceptance, not perfection. Embrace your unique qualities - they're what make you interesting! Practice self-care physically and mentally. When you feel good, you radiate confidence. Dress in a way that makes you feel amazing. Your comfort shows through your body language. Work on your posture - stand tall, shoulders back, head high. This actually changes your body chemistry and makes you feel more confident! Prepare for dates by having some conversation topics ready, but don't over-script everything. Practice positive self-talk. Replace 'What if they don't like me?' with 'I'm excited to see if we connect!' Focus on being interested rather than interesting. When you're genuinely curious about others, pressure falls away. Remember past successes in social situations. Build confidence through small wins. And here's the truth: rejection is normal and not a reflection of your worth. Everyone experiences it. The most confident people aren't those who never feel nervous - they're the ones who feel it and do it anyway! You've got this!"
+                },
+                tips: [
+                    { icon: '💗', title: 'Be Authentic', desc: 'The most attractive quality is being genuine. Don\'t pretend to be someone you\'re not. Your real personality will attract the right person for you.' },
+                    { icon: '💬', title: 'Active Listening', desc: 'Listen with your heart, not just your ears. Show genuine interest in what your date says and ask meaningful follow-up questions.' },
+                    { icon: '😊', title: 'Smile Naturally', desc: 'A genuine smile is magnetic! It makes you approachable and shows you\'re enjoying the moment. Let your happiness shine through.' },
+                    { icon: '👗', title: 'Dress Confidently', desc: 'Wear something that makes you feel amazing! Confidence is the best accessory. Choose comfort over trends if it helps you relax.' },
+                    { icon: '🎯', title: 'Plan Thoughtfully', desc: 'Choose date activities that allow conversation and connection. Interactive experiences create better memories than passive ones.' },
+                    { icon: '💝', title: 'Show Appreciation', desc: 'Express gratitude and compliments sincerely. Small gestures of kindness can make a huge difference in building connection.' }
+                ]
+            },
+            hi: {
+                name: 'माया',
+                role: 'आपकी व्यक्तिगत डेटिंग कोच',
+                tipsTitle: 'डेटिंग टिप्स और सलाह',
+                topics: [
+                    { icon: '💝', title: 'परिचय', key: 'intro' },
+                    { icon: '💑', title: 'पहली डेट टिप्स', key: 'firstdate' },
+                    { icon: '💬', title: 'बातचीत कौशल', key: 'conversation' },
+                    { icon: '❤️', title: 'संबंध बनाना', key: 'connection' },
+                    { icon: '🌹', title: 'रोमांस टिप्स', key: 'romance' },
+                    { icon: '💪', title: 'आत्मविश्वास बढ़ाएं', key: 'confidence' }
+                ],
+                speeches: {
+                    intro: "नमस्ते! मैं माया हूं, आपकी व्यक्तिगत डेटिंग कोच। मैं आपको प्यार और रिश्तों की खूबसूरत दुनिया में मार्गदर्शन देने के लिए बहुत उत्साहित हूं। चाहे आप अपनी पहली डेट की तैयारी कर रहे हों, या किसी मौजूदा रिश्ते को गहरा करना चाहते हों, मैं यहां गर्मजोशी और ज्ञान के साथ आपकी मदद के लिए हूं। नीचे किसी भी विषय पर क्लिक करें मेरी सलाह सुनने के लिए!",
+                    firstdate: "पहली डेट घबराहट भरी लग सकती है, लेकिन यह अविश्वसनीय रूप से रोमांचक भी है! यहाँ मेरी सबसे अच्छी सलाह है: सबसे पहले, प्रामाणिक रूप से खुद बनें। सही व्यक्ति असली आपसे प्यार करेगा। ऐसे कपड़े पहनें जो आपको आत्मविश्वासी और सहज महसूस कराएं। समय पर पहुंचें - यह सम्मान और उत्साह दिखाता है। ऐसी जगह चुनें जहां आप वास्तव में बात कर सकें। अपना फोन पूरी तरह से दूर रखें। खुले सवाल पूछें और उनके जवाबों को सच में सुनें। मुस्कुराएं, आंखों में देखें, और सबसे महत्वपूर्ण, मज़े करें!",
+                    conversation: "बेहतरीन बातचीत किसी भी सार्थक संबंध की नींव है! कुछ शक्तिशाली टिप्स: खुले सवाल पूछें जो कहानियों को आमंत्रित करते हैं। सक्रिय श्रवण का अभ्यास करें। अपनी कहानियां भी साझा करें! असुरक्षितता संबंध बनाती है। हास्य का स्वाभाविक रूप से उपयोग करें। शुरुआती डेट पर विवादास्पद विषयों से बचें। ऊर्जा को सकारात्मक और जिज्ञासु रखें। याद रखें, अच्छी बातचीत एक नृत्य की तरह है!",
+                    connection: "गहरा भावनात्मक संबंध बनाना वह है जो डेटिंग को वास्तव में खास बनाता है। वर्तमान में रहें। अपने प्रामाणिक विचार और भावनाएं साझा करें। सामान्य आधार खोजें। छोटे इशारों के माध्यम से सराहना दिखाएं। साझा अनुभव और यादें बनाएं। उनके सपनों का समर्थन करें। विश्वास समय लेता है - इसे स्वाभाविक रूप से विकसित होने दें!",
+                    romance: "रोमांस किसी को विशेष और पोषित महसूस कराने की सुंदर कला है! छोटे इशारे बड़े प्रदर्शनों से अधिक मायने रखते हैं। विचारशील योजना के माध्यम से रोमांटिक क्षण बनाएं। अपने शब्दों का उपयोग प्रशंसा व्यक्त करने के लिए करें। कभी-कभी उन्हें आश्चर्यचकित करें। शारीरिक स्नेह बंधन हार्मोन जारी करता है। आँख मिलाएं और मुस्कुराएं। रोमांस महंगे उपहारों के बारे में नहीं है!",
+                    confidence: "आत्मविश्वास सबसे आकर्षक गुण है जिसे आप विकसित कर सकते हैं! आत्मविश्वास आत्म-स्वीकृति से आता है। अपने अद्वितीय गुणों को अपनाएं। आत्म-देखभाल का अभ्यास करें। अपनी मुद्रा पर काम करें - सीधे खड़े हों। सकारात्मक आत्म-चर्चा का अभ्यास करें। अस्वीकृति सामान्य है। सबसे आत्मविश्वासी लोग वे हैं जो घबराहट महसूस करते हैं और फिर भी करते हैं!"
+                },
+                tips: [
+                    { icon: '💗', title: 'प्रामाणिक रहें', desc: 'सबसे आकर्षक गुण वास्तविक होना है। कोई और बनने का नाटक न करें। आपका असली व्यक्तित्व सही व्यक्ति को आकर्षित करेगा।' },
+                    { icon: '💬', title: 'सक्रिय श्रवण', desc: 'सिर्फ कानों से नहीं, दिल से सुनें। अपनी डेट की बातों में वास्तविक रुचि दिखाएं और सार्थक सवाल पूछें।' },
+                    { icon: '😊', title: 'स्वाभाविक मुस्कान', desc: 'एक वास्तविक मुस्कान चुंबकीय है! यह आपको सुलभ बनाती है और दिखाती है कि आप पल का आनंद ले रहे हैं।' },
+                    { icon: '👗', title: 'आत्मविश्वास से पहनें', desc: 'कुछ ऐसा पहनें जो आपको अद्भुत महसूस कराए! आत्मविश्वास सबसे अच्छा एक्सेसरी है।' },
+                    { icon: '🎯', title: 'सोच-समझकर योजना', desc: 'ऐसी डेट गतिविधियां चुनें जो बातचीत की अनुमति दें। इंटरैक्टिव अनुभव बेहतर यादें बनाते हैं।' },
+                    { icon: '💝', title: 'सराहना दिखाएं', desc: 'ईमानदारी से कृतज्ञता व्यक्त करें। दयालुता के छोटे इशारे बहुत फर्क डाल सकते हैं।' }
+                ]
+            },
+            bn: {
+                name: 'মায়া',
+                role: 'আপনার ব্যক্তিগত ডেটিং কোচ',
+                tipsTitle: 'ডেটিং টিপস এবং পরামর্শ',
+                topics: [
+                    { icon: '💝', title: 'পরিচিতি', key: 'intro' },
+                    { icon: '💑', title: 'প্রথম ডেট টিপস', key: 'firstdate' },
+                    { icon: '💬', title: 'কথোপকথন দক্ষতা', key: 'conversation' },
+                    { icon: '❤️', title: 'সংযোগ তৈরি', key: 'connection' },
+                    { icon: '🌹', title: 'রোমান্স টিপস', key: 'romance' },
+                    { icon: '💪', title: 'আত্মবিশ্বাস বৃদ্ধি', key: 'confidence' }
+                ],
+                speeches: {
+                    intro: "হ্যালো! আমি মায়া, আপনার ব্যক্তিগত ডেটিং কোচ। আমি ভালোবাসা এবং সম্পর্কের সুন্দর জগতে আপনাকে গাইড করতে অত্যন্ত উত্সাহিত। আপনি আপনার প্রথম ডেটের জন্য প্রস্তুতি নিচ্ছেন, বা একটি বিদ্যমান সংযোগকে গভীর করতে চাইছেন, আমি এখানে উষ্ণতা এবং জ্ঞান দিয়ে আপনাকে গাইড করতে আছি। আমার পরামর্শ শুনতে নিচের যেকোনো বিষয়ে ক্লিক করুন!",
+                    firstdate: "প্রথম ডেট স্নায়ু-বিধ্বংসী মনে হতে পারে, তবে এগুলি অবিশ্বাস্যভাবে উত্তেজনাপূর্ণও! এখানে আমার সেরা পরামর্শ: প্রথমত, প্রকৃতভাবে নিজেই থাকুন। সঠিক ব্যক্তি আসল আপনার সাথে প্রেমে পড়বে। এমন কিছু পরুন যা আপনাকে আত্মবিশ্বাসী এবং আরামদায়ক অনুভব করায়। সময়মতো পৌঁছান - এটি সম্মান এবং উৎসাহ দেখায়। এমন একটি জায়গা বেছে নিন যেখানে আপনি প্রকৃতপক্ষে কথা বলতে পারেন। আপনার ফোন সম্পূর্ণভাবে দূরে রাখুন। খোলা-শেষ প্রশ্ন জিজ্ঞাসা করুন এবং সত্যিই তাদের উত্তর শুনুন। হাসুন, চোখের যোগাযোগ করুন, এবং সবচেয়ে গুরুত্বপূর্ণ, মজা করুন!",
+                    conversation: "দুর্দান্ত কথোপকথন যেকোনো অর্থপূর্ণ সংযোগের ভিত্তি! কিছু শক্তিশালী টিপস: খোলা-শেষ প্রশ্ন জিজ্ঞাসা করুন যা গল্প বলার আমন্ত্রণ জানায়। সক্রিয় শ্রবণ অনুশীলন করুন। আপনার নিজের গল্পও শেয়ার করুন! দুর্বলতা সংযোগ তৈরি করে। হাস্যরস স্বাভাবিকভাবে ব্যবহার করুন। প্রথম দিকের ডেটে বিতর্কিত বিষয় এড়িয়ে চলুন। শক্তি ইতিবাচক এবং কৌতূহলী রাখুন। মনে রাখবেন, ভাল কথোপকথন একটি নৃত্যের মতো!",
+                    connection: "গভীর আবেগময় সংযোগ তৈরি করা যা ডেটিংকে সত্যিকারের বিশেষ কিছুতে রূপান্তরিত করে। বর্তমানে থাকুন। আপনার প্রকৃত চিন্তাভাবনা এবং অনুভূতি শেয়ার করুন। সাধারণ ভিত্তি খুঁজুন। ছোট অঙ্গভঙ্গির মাধ্যমে প্রশংসা দেখান। একসাথে ভাগ করা অভিজ্ঞতা এবং স্মৃতি তৈরি করুন। তাদের স্বপ্নকে সমর্থন করুন। বিশ্বাস সময় নেয় - এটিকে স্বাভাবিকভাবে বিকশিত হতে দিন!",
+                    romance: "রোমান্স হল কাউকে বিশেষ এবং লালিত অনুভব করানোর সুন্দর শিল্প! ছোট অঙ্গভঙ্গি বড় প্রদর্শনের চেয়ে বেশি গুরুত্বপূর্ণ। চিন্তাশীল পরিকল্পনার মাধ্যমে রোমান্টিক মুহূর্ত তৈরি করুন। প্রশংসা প্রকাশ করতে আপনার শব্দ ব্যবহার করুন। মাঝে মাঝে তাদের চমকে দিন। শারীরিক স্নেহ বন্ধন হরমোন মুক্ত করে। চোখের যোগাযোগ করুন এবং হাসুন। রোমান্স ব্যয়বহুল উপহার সম্পর্কে নয়!",
+                    confidence: "আত্মবিশ্বাস হল সবচেয়ে আকর্ষণীয় গুণ যা আপনি চাষ করতে পারেন! আত্মবিশ্বাস আত্ম-গ্রহণযোগ্যতা থেকে আসে। আপনার অনন্য গুণাবলী আলিঙ্গন করুন। স্ব-যত্ন অনুশীলন করুন। আপনার ভঙ্গিতে কাজ করুন - সোজা দাঁড়ান। ইতিবাচক স্ব-কথা অনুশীলন করুন। প্রত্যাখ্যান স্বাভাবিক। সবচেয়ে আত্মবিশ্বাসী মানুষ তারা যারা স্নায়বিক বোধ করে এবং তবুও এটি করে!"
+                },
+                tips: [
+                    { icon: '💗', title: 'প্রকৃত থাকুন', desc: 'সবচেয়ে আকর্ষণীয় গুণ হল সত্যিকারের হওয়া। আপনি যা নন তা হওয়ার ভান করবেন না। আপনার আসল ব্যক্তিত্ব সঠিক ব্যক্তিকে আকৃষ্ট করবে।' },
+                    { icon: '💬', title: 'সক্রিয় শ্রবণ', desc: 'শুধু কান দিয়ে নয়, হৃদয় দিয়ে শুনুন। আপনার ডেট যা বলে তাতে প্রকৃত আগ্রহ দেখান এবং অর্থপূর্ণ প্রশ্ন করুন।' },
+                    { icon: '😊', title: 'স্বাভাবিকভাবে হাসুন', desc: 'একটি প্রকৃত হাসি চুম্বকীয়! এটি আপনাকে সহজলভ্য করে এবং দেখায় যে আপনি মুহূর্তটি উপভোগ করছেন।' },
+                    { icon: '👗', title: 'আত্মবিশ্বাসের সাথে পোশাক', desc: 'এমন কিছু পরুন যা আপনাকে আশ্চর্যজনক অনুভব করায়! আত্মবিশ্বাস সেরা অ্যাক্সেসরি।' },
+                    { icon: '🎯', title: 'চিন্তাশীল পরিকল্পনা', desc: 'এমন ডেট কার্যক্রম বেছে নিন যা কথোপকথনের অনুমতি দেয়। ইন্টারেক্টিভ অভিজ্ঞতা আরও ভাল স্মৃতি তৈরি করে।' },
+                    { icon: '💝', title: 'প্রশংসা দেখান', desc: 'আন্তরিকভাবে কৃতজ্ঞতা প্রকাশ করুন। দয়ার ছোট অঙ্গভঙ্গি বিশাল পার্থক্য করতে পারে।' }
+                ]
+            }
+        };
+
+        function createHearts() {
+            const bg = document.getElementById('animatedBg');
+            for (let i = 0; i < 30; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.textContent = ['❤️', '💕', '💖', '💗', '💝', '💓', '💞'][Math.floor(Math.random() * 7)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 12 + 's';
+                heart.style.animationDuration = (Math.random() * 8 + 8) + 's';
+                heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                bg.appendChild(heart);
+            }
+        }
+
+        function initApp() {
+            setTimeout(() => {
+                document.getElementById('splash').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                playSound(800, 0.1, 150);
+            }, 3000);
+            createHearts();
+        }
+
+        function selectLanguage(lang) {
+            playSound(1000, 0.15, 100);
+            vibrate(50);
+            currentLanguage = lang;
+            
+            document.querySelectorAll('.lang-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.target.closest('.lang-card').classList.add('active');
+            
+            setTimeout(() => {
+                document.getElementById('languageScreen').classList.add('hidden');
+                document.getElementById('assistantScreen').classList.remove('hidden');
+                updateContent();
+                playSound(1200, 0.15, 150);
+                vibrate([50, 100, 50]);
+                
+                setTimeout(() => {
+                    speakTopic('intro');
+                }, 800);
+            }, 600);
+        }
+
+        function updateContent() {
+            const data = content[currentLanguage];
+            document.getElementById('assistantName').textContent = data.name;
+            document.querySelector('.voice-role').textContent = data.role;
+            document.getElementById('tipsTitle').textContent = data.tipsTitle;
+            
+            const topicSelector = document.getElementById('topicSelector');
+            topicSelector.innerHTML = data.topics.map(topic => `
+                <div class="topic-btn" onclick="speakTopic('${topic.key}')">
+                    <span class="topic-icon">${topic.icon}</span>
+                    <div class="topic-title">${topic.title}</div>
+                </div>
+            `).join('');
+            
+            displayTips();
+        }
+
+        function displayTips() {
+            const data = content[currentLanguage];
+            const grid = document.getElementById('tipsGrid');
+            
+            grid.innerHTML = data.tips.map((tip, index) => `
+                <div class="tip-card" style="animation-delay: ${index * 0.1}s" onclick="speakTip(${index})">
+                    <div class="tip-icon">${tip.icon}</div>
+                    <div class="tip-title">${tip.title}</div>
+                    <div class="tip-desc">${tip.desc}</div>
+                </div>
+            `).join('');
+        }
+
+        function speakTopic(topicKey) {
+            playSound(900, 0.12, 100);
+            vibrate(50);
+            
+            const data = content[currentLanguage];
+            const speech = data.speeches[topicKey];
+            
+            showSpeechBubble(speech);
+            speak(speech);
+        }
+
+        function speakTip(index) {
+            playSound(900, 0.12, 100);
+            vibrate(50);
+            
+            const data = content[currentLanguage];
+            const tip = data.tips[index];
+            const fullText = `${tip.title}. ${tip.desc}`;
+            
+            showSpeechBubble(fullText);
+            speak(fullText);
+            
+            document.getElementById('speechBubble').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'nearest' 
+            });
+        }
+
+        function showSpeechBubble(text) {
+            const bubble = document.getElementById('speechBubble');
+            const textEl = document.getElementById('bubbleText');
+            const titleEl = document.getElementById('bubbleTitle');
+            const data = content[currentLanguage];
+            
+            bubble.classList.add('visible');
+            titleEl.textContent = `${data.name} says:`;
+            textEl.innerHTML = '<div class="typing"><span>.</span><span>.</span><span>.</span></div>';
+            
+            setTimeout(() => {
+                textEl.textContent = text;
+            }, 800);
+        }
+
+        function speak(text) {
+            if (!synthesis) {
+                alert('Speech synthesis not supported in your browser');
+                return;
+            }
+            
+            stopSpeech();
+            
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            
+            currentUtterance.lang = currentLanguage === 'hi' ? 'hi-IN' : 
+                                   currentLanguage === 'bn' ? 'bn-IN' : 'en-US';
+            currentUtterance.rate = 0.85;
+            currentUtterance.pitch = 1.3;
+            currentUtterance.volume = 1;
+            
+            currentUtterance.onstart = () => {
+                isSpeaking = true;
+                document.getElementById('avatar').classList.add('speaking');
+                document.getElementById('waveVisualizer').classList.add('active');
+                playSound(800, 0.08, 100);
+            };
+            
+            currentUtterance.onend = () => {
+                isSpeaking = false;
+                document.getElementById('avatar').classList.remove('speaking');
+                setTimeout(() => {
+                    document.getElementById('waveVisualizer').classList.remove('active');
+                }, 500);
+                playSound(600, 0.08, 100);
+            };
+            
+            currentUtterance.onerror = (event) => {
+                console.error('Speech synthesis error:', event);
+                isSpeaking = false;
+                document.getElementById('avatar').classList.remove('speaking');
+                document.getElementById('waveVisualizer').classList.remove('active');
+            };
+            
+            synthesis.getVoices();
+            
+            setTimeout(() => {
+                const voices = synthesis.getVoices();
+                const langCode = currentUtterance.lang.split('-')[0];
+                
+                const femaleVoice = voices.find(voice => {
+                    const voiceName = voice.name.toLowerCase();
+                    const voiceLang = voice.lang.toLowerCase();
+                    return (voiceLang.includes(langCode) || voiceLang.includes(currentUtterance.lang.toLowerCase())) &&
+                           (voiceName.includes('female') || 
+                            voiceName.includes('woman') ||
+                            voiceName.includes('samantha') ||
+                            voiceName.includes('victoria') ||
+                            voiceName.includes('karen') ||
+                            voiceName.includes('moira') ||
+                            voiceName.includes('tessa') ||
+                            voiceName.includes('veena') ||
+                            voiceName.includes('fiona') ||
+                            voiceLang.includes('female'));
+                });
+                
+                if (femaleVoice) {
+                    currentUtterance.voice = femaleVoice;
+                    console.log('Using voice:', femaleVoice.name);
+                } else {
+                    const anyLangVoice = voices.find(voice => 
+                        voice.lang.toLowerCase().includes(langCode)
+                    );
+                    if (anyLangVoice) {
+                        currentUtterance.voice = anyLangVoice;
+                        console.log('Using voice:', anyLangVoice.name);
+                    }
+                }
+                
+                synthesis.speak(currentUtterance);
+            }, 100);
+        }
+
+        function pauseSpeech() {
+            if (synthesis && isSpeaking) {
+                synthesis.pause();
+                playSound(700, 0.1, 100);
+                vibrate(50);
+            }
+        }
+
+        function resumeSpeech() {
+            if (synthesis && isSpeaking) {
+                synthesis.resume();
+                playSound(900, 0.1, 100);
+                vibrate(50);
+            }
+        }
+
+        function stopSpeech() {
+            if (synthesis) {
+                synthesis.cancel();
+                isSpeaking = false;
+                document.getElementById('avatar').classList.remove('speaking');
+                document.getElementById('waveVisualizer').classList.remove('active');
+                playSound(600, 0.1, 100);
+                vibrate(50);
+            }
+        }
+
+        function playSound(frequency, volume, duration) {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = frequency;
+                gainNode.gain.value = volume;
+                oscillator.type = 'sine';
+                
+                oscillator.start();
+                setTimeout(() => {
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    setTimeout(() => oscillator.stop(), 100);
+                }, duration);
+            } catch (e) {
+                console.log('Audio not available');
+            }
+        }
+
+        function vibrate(pattern = 50) {
+            if ('vibrate' in navigator) {
+                navigator.vibrate(pattern);
+            }
+        }
+
+        if (synthesis) {
+            if (synthesis.onvoiceschanged !== undefined) {
+                synthesis.onvoiceschanged = () => {
+                    synthesis.getVoices();
+                };
+            }
+            
+            setTimeout(() => {
+                synthesis.getVoices();
+            }, 100);
+        }
+
+        window.addEventListener('beforeunload', () => {
+            stopSpeech();
+        });
+
+        initApp();
+    </script>
+</body>
+</html>
